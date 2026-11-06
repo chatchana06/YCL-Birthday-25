@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Happy Birthday Surprise 🎂❤️</title>
+  <!-- Google Fonts: Kanit & Cormorant Garamond -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Canvas Confetti for celebration -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Kanit', sans-serif;
+      background-color: #fbfbf9;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+      width: 100vw;
+      max-width: 100%;
+      margin: 0;
+      padding: 0;
+    }
+
+    .serif-title {
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* Candle flame animation - slow, smooth and natural */
+    @keyframes flameWiggle {
+      0%, 100% { transform: scale(1) rotate(-1deg); }
+      50% { transform: scale(1.02, 1.04) rotate(1.2deg); }
+    }
+    .flame-anim {
+      animation: flameWiggle 2.2s ease-in-out infinite alternate;
+      transform-origin: bottom center;
+    }
+
+    /* Backpack pulse */
+    @keyframes pulseGlow {
+      0%, 100% { filter: drop-shadow(0 0 4px rgba(59, 130, 246, 0.4)); transform: scale(1); }
+      50% { filter: drop-shadow(0 0 16px rgba(59, 130, 246, 0.9)); transform: scale(1.06); }
+    }
+    .backpack-highlight {
+      animation: pulseGlow 1.2s infinite ease-in-out;
+    }
+
+    /* Pop in animation */
+    .pop-in {
+      animation: popIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+    @keyframes popIn {
+      0% { opacity: 0; transform: scale(0.3) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* Envelope Letter slide up */
+    .letter-slide-up {
+      animation: letterUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes letterUp {
+      0% { transform: translateY(80px) scale(0.9); opacity: 0; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+  </style>
+</head>
+<body class="min-h-screen w-screen max-w-full flex flex-col justify-between items-center text-gray-800 p-3 box-border relative select-none overflow-x-hidden">
+
+  <!-- Floating Audio Generator (Cute Chimes with Web Audio API) -->
+  <script>
+    let audioCtx = null;
+    let micStream = null;
+    let analyser = null;
+    let isMicListening = false;
+
+    function initAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function playChime(freq = 600, type = 'sine') {
+      try {
+        initAudioContext();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.35);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.35);
+      } catch (e) {}
+    }
+
+    // Play Full Happy Birthday Song
+    function playHappyBirthdaySong() {
+      try {
+        initAudioContext();
+        const C4 = 261.63, D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, C5 = 523.25;
+        const melody = [
+          {f: C4, d: 0.25}, {f: C4, d: 0.25}, {f: D4, d: 0.5}, {f: C4, d: 0.5}, {f: F4, d: 0.5}, {f: E4, d: 1.0},
+          {f: C4, d: 0.25}, {f: C4, d: 0.25}, {f: D4, d: 0.5}, {f: C4, d: 0.5}, {f: G4, d: 0.5}, {f: F4, d: 1.0},
+          {f: C4, d: 0.25}, {f: C4, d: 0.25}, {f: C5, d: 0.5}, {f: A4, d: 0.5}, {f: F4, d: 0.5}, {f: E4, d: 0.5}, {f: D4, d: 1.0},
+          {f: A4, d: 0.25}, {f: A4, d: 0.25}, {f: G4, d: 0.5}, {f: F4, d: 0.5}, {f: G4, d: 0.5}, {f: F4, d: 1.2}
+        ];
+
+        let currTime = audioCtx.currentTime;
+        melody.forEach(note => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(note.f, currTime);
+          gain.gain.setValueAtTime(0.15, currTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, currTime + note.d * 0.9);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(currTime);
+          osc.stop(currTime + note.d);
+          currTime += note.d;
+        });
+
+        const totalDurationMs = (currTime - audioCtx.currentTime) * 1000;
+        setTimeout(() => {
+          if (!candleBlownOut) {
+            titleEl.textContent = "Make a wish! 🌟🎂 (Blow into mic or tap the flame)";
+            titleEl.classList.add("animate-pulse");
+            startMicrophoneBlowDetection();
+          }
+        }, totalDurationMs);
+      } catch (e) {}
+    }
+
+    // Play Joyful Applause Sound Effect
+    function playApplauseSound() {
+      try {
+        initAudioContext();
+        const bufferSize = audioCtx.sampleRate * 2.5;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const output = buffer.getChannelData(0);
+
+        for (let i = 0; i < bufferSize; i++) {
+          output[i] = Math.random() * 2 - 1;
+        }
+
+        const whiteNoise = audioCtx.createBufferSource();
+        whiteNoise.buffer = buffer;
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+        filter.Q.setValueAtTime(1.0, audioCtx.currentTime);
+
+        const gainNode = audioCtx.createGain();
+        gainNode.gain.setValueAtTime(0.01, audioCtx.currentTime);
+        gainNode.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.3);
+        gainNode.gain.linearRampToValueAtTime(0.2, audioCtx.currentTime + 1.5);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5);
+
+        whiteNoise.connect(filter);
+        filter.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+
+        whiteNoise.start();
+        whiteNoise.stop(audioCtx.currentTime + 2.5);
+      } catch (e) {}
+    }
+
+    function startMicrophoneBlowDetection() {
+      if (isMicListening || candleBlownOut) return;
+      
+      navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+        .then(stream => {
+          micStream = stream;
+          isMicListening = true;
+          initAudioContext();
+          
+          const source = audioCtx.createMediaStreamSource(stream);
+          analyser = audioCtx.createAnalyser();
+          analyser.fftSize = 512;
+          source.connect(analyser);
+
+          const dataArray = new Uint8Array(analyser.frequencyBinCount);
+
+          function checkBlow() {
+            if (candleBlownOut || !isMicListening) return;
+            analyser.getByteFrequencyData(dataArray);
+            let sum = 0;
+            for (let i = 0; i < dataArray.length; i++) {
+              sum += dataArray[i];
+            }
+            let average = sum / dataArray.length;
+
+            if (average > 35) {
+              blowOutCandle();
+              stopMicrophoneBlowDetection();
+              return;
+            }
+            requestAnimationFrame(checkBlow);
+          }
+          checkBlow();
+        })
+        .catch(err => {
+          console.log("Microphone access not available or denied:", err);
+        });
+    }
+
+    function stopMicrophoneBlowDetection() {
+      isMicListening = false;
+      if (micStream) {
+        micStream.getTracks().forEach(track => track.stop());
+        micStream = null;
+      }
+    }
+  </script>
+
+  <!-- PIN Entry Welcome Modal Overlay -->
+  <div id="pin-modal" class="fixed inset-0 z-50 bg-[#faf8f5] flex flex-col items-center justify-center p-4 box-border">
+    <div class="w-full max-w-xs bg-white border-2 border-red-200 rounded-3xl p-5 shadow-xl text-center flex flex-col items-center pop-in">
+      <div class="text-3xl mb-2">🗓️✨</div>
+      <h2 class="text-base md:text-lg font-bold text-gray-800 mb-1">What is today's date?</h2>
+      <p class="text-xs text-gray-500 mb-4">Enter special PIN (DD/MM/YYYY)</p>
+
+      <!-- Display Pin Input Box -->
+      <div id="pin-display" class="w-full h-12 bg-gray-50 border-2 border-red-300 rounded-2xl flex items-center justify-center text-lg font-bold tracking-widest text-red-600 mb-2 shadow-inner">
+        _ _ / _ _ / _ _ _ _
+      </div>
+
+      <div id="pin-error" class="text-xs text-red-500 font-medium h-6 mb-1"></div>
+
+      <!-- Phone Keypad -->
+      <div class="grid grid-cols-3 gap-2.5 w-full max-w-[240px]">
+        <button onclick="pressKey('1')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">1</button>
+        <button onclick="pressKey('2')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">2</button>
+        <button onclick="pressKey('3')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">3</button>
+        <button onclick="pressKey('4')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">4</button>
+        <button onclick="pressKey('5')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">5</button>
+        <button onclick="pressKey('6')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">6</button>
+        <button onclick="pressKey('7')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">7</button>
+        <button onclick="pressKey('8')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">8</button>
+        <button onclick="pressKey('9')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">9</button>
+        <button onclick="clearPin()" class="h-12 bg-red-50 hover:bg-red-100 active:scale-95 rounded-2xl font-bold text-xs text-red-600 shadow-sm transition-all">CLR</button>
+        <button onclick="pressKey('0')" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-lg text-gray-700 shadow-sm transition-all">0</button>
+        <button onclick="deletePin()" class="h-12 bg-gray-100 hover:bg-red-50 active:scale-95 rounded-2xl font-bold text-xs text-gray-600 shadow-sm transition-all">⌫</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Intro Greeting Modal (After PIN Success) -->
+  <div id="intro-modal" class="hidden fixed inset-0 z-50 bg-[#faf8f5] flex flex-col items-center justify-center p-4 box-border">
+    <div class="w-full max-w-xs bg-white border-2 border-pink-200 rounded-3xl p-5 shadow-xl text-center flex flex-col items-center pop-in">
+      
+      <!-- Speech Bubble -->
+      <div class="relative mb-3 w-full">
+        <div class="bg-pink-50 border-2 border-pink-300 rounded-2xl px-3 py-2 text-xs sm:text-sm font-bold text-gray-800 shadow-sm">
+          Today is YCL's birthday! ✨🎂
+        </div>
+        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-pink-300"></div>
+      </div>
+
+      <!-- Gorgeous Female Shinchan Character holding a cake -->
+      <div class="relative w-40 h-44 mb-4 flex items-center justify-center">
+        <svg viewBox="0 0 200 220" class="w-full h-full drop-shadow-md">
+          <!-- Realistic Long Brown Hair Behind & Flowing Sides -->
+          <path d="M 42,70 Q 25,120 38,165 Q 52,130 58,95 Z" fill="#5c3a21" />
+          <path d="M 158,70 Q 175,120 162,165 Q 148,130 142,95 Z" fill="#5c3a21" />
+
+          <!-- Face & Head -->
+          <path d="M 55,60 C 35,60 30,95 48,115 C 60,125 90,122 115,112 C 135,102 140,75 125,58 C 110,40 75,40 55,60 Z" fill="#ffd5be" stroke="#000" stroke-width="3" />
+
+          <!-- Natural Soft Bangs / Hair Front (Smooth, realistic strands covering forehead nicely) -->
+          <path d="M 46,50 Q 75,32 100,52 Q 125,32 154,50 Q 140,68 112,62 Q 88,68 46,50 Z" fill="#5c3a21" />
+          <!-- Soft Hair Parting & Natural Strands -->
+          <path d="M 88,42 Q 100,55 112,42" fill="none" stroke="#422917" stroke-width="2" stroke-linecap="round"/>
+          <path d="M 55,54 Q 70,64 85,57" fill="none" stroke="#422917" stroke-width="2" stroke-linecap="round"/>
+          <path d="M 115,57 Q 130,64 145,54" fill="none" stroke="#422917" stroke-width="2" stroke-linecap="round"/>
+
+          <!-- Sparkling Starry Eyes -->
+          <ellipse cx="75" cy="72" rx="9" ry="12" fill="#000"/>
+          <ellipse cx="108" cy="72" rx="9" ry="12" fill="#000"/>
+          <text x="65" y="79" font-size="16">✨</text>
+          <text x="98" y="79" font-size="16">✨</text>
+
+          <!-- Cute Smile & Rosy Cheeks -->
+          <path d="M 87,88 Q 92,94 97,88" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round"/>
+          <ellipse cx="58" cy="85" rx="7" ry="4" fill="#f87171" opacity="0.5"/>
+          <ellipse cx="118" cy="85" rx="7" ry="4" fill="#f87171" opacity="0.5"/>
+
+          <!-- Pink Dress / Outfit -->
+          <path d="M 55,105 Q 92,100 130,105 L 138,150 L 48,150 Z" fill="#f472b6" stroke="#000" stroke-width="3"/>
+          
+          <!-- Hands holding a mini cake -->
+          <circle cx="70" cy="130" r="8" fill="#ffd5be" stroke="#000" stroke-width="2"/>
+          <circle cx="114" cy="130" r="8" fill="#ffd5be" stroke="#000" stroke-width="2"/>
+
+          <!-- Mini Birthday Cake held in hands -->
+          <rect x="76" y="120" width="40" height="25" rx="4" fill="#fff" stroke="#000" stroke-width="2.5"/>
+          <line x1="96" y1="120" x2="96" y2="112" stroke="#555" stroke-width="2"/>
+          <ellipse cx="96" cy="111" rx="3" ry="5" fill="#fbbf24"/>
+        </svg>
+      </div>
+
+      <!-- Proceed Button -->
+      <button onclick="closeIntroModal()" class="w-full bg-pink-500 hover:bg-pink-600 text-white font-bold py-2.5 rounded-2xl shadow-md transition-all text-sm">
+        Let's Start! 🍓✨
+      </button>
+    </div>
+  </div>
+
+  <!-- Top Title / Brand -->
+  <div class="w-full text-center pt-2 px-2">
+    <div id="instruction-title" class="text-sm md:text-base font-medium text-gray-600 transition-all duration-300 break-words">
+      Decorate the cake! 🍓
+    </div>
+  </div>
+
+  <!-- Main Interactive Area: The Cake Canvas -->
+  <div class="relative w-full max-w-[320px] aspect-[4/5] flex items-center justify-center my-auto">
+    
+    <!-- SVG Cake & Decor -->
+    <svg viewBox="0 0 400 480" class="w-full h-full drop-shadow-sm overflow-visible">
+      <defs>
+        <!-- Gradients -->
+        <linearGradient id="cakeSide" x1="0" y1="0" x2="1" y2="0">
+          <stop offset="0%" stop-color="#f5ede2" />
+          <stop offset="15%" stop-color="#fdfbf7" />
+          <stop offset="85%" stop-color="#faf5ec" />
+          <stop offset="100%" stop-color="#eddcc9" />
+        </linearGradient>
+        <linearGradient id="plateGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#f9f5ed"/>
+          <stop offset="100%" stop-color="#eedfcb"/>
+        </linearGradient>
+        <radialGradient id="strawberryGrad" cx="35%" cy="35%" r="65%">
+          <stop offset="0%" stop-color="#ff4d4d"/>
+          <stop offset="40%" stop-color="#e62020"/>
+          <stop offset="100%" stop-color="#b80010"/>
+        </radialGradient>
+        <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+          <feDropShadow dx="0" dy="6" stdDeviation="6" flood-opacity="0.08"/>
+        </filter>
+
+        <!-- Reusable Strawberry Symbol -->
+        <g id="strawberry-shape">
+          <path d="M 0,-28 C 18,-28 30,-10 26,14 C 23,28 10,38 0,44 C -10,38 -23,28 -26,14 C -30,-10 -18,-28 0,-28 Z" fill="url(#strawberryGrad)" />
+          <!-- Seeds -->
+          <g fill="#ffe066" opacity="0.9">
+            <circle cx="-10" cy="-12" r="1.4"/>
+            <circle cx="0" cy="-15" r="1.4"/>
+            <circle cx="10" cy="-12" r="1.4"/>
+            <circle cx="-16" cy="0" r="1.4"/>
+            <circle cx="-5" cy="0" r="1.4"/>
+            <circle cx="6" cy="2" r="1.4"/>
+            <circle cx="16" cy="0" r="1.4"/>
+            <circle cx="-10" cy="14" r="1.4"/>
+            <circle cx="0" cy="15" r="1.4"/>
+            <circle cx="11" cy="14" r="1.4"/>
+            <circle cx="-4" cy="28" r="1.2"/>
+            <circle cx="4" cy="28" r="1.2"/>
+          </g>
+          <!-- Cute tiny leaf -->
+          <path d="M -4,-28 C -7,-33 0,-36 0,-32 C 0,-36 7,-33 4,-28 Z" fill="#4ade80" />
+        </g>
+      </defs>
+
+      <!-- 1. Plate / Base -->
+      <ellipse cx="200" cy="305" rx="165" ry="46" fill="url(#plateGrad)" filter="url(#shadow)" />
+      <ellipse cx="200" cy="302" rx="155" ry="40" fill="#fdfaf4" />
+
+      <!-- 2. Cake Body -->
+      <path d="M 75,185 
+               C 75,185 75,285 75,285 
+               C 75,325 325,325 325,285 
+               L 325,185 Z" fill="url(#cakeSide)" />
+
+      <!-- Cake Top Ellipse -->
+      <ellipse cx="200" cy="185" rx="125" ry="38" fill="#fffdf9" stroke="#f2e6d6" stroke-width="1.5" />
+
+      <!-- Cream Piping around base -->
+      <g fill="#fffdfa" stroke="#eedfcb" stroke-width="1.2">
+        <circle cx="85" cy="285" r="10" />
+        <circle cx="100" cy="292" r="10" />
+        <circle cx="120" cy="299" r="10" />
+        <circle cx="144" cy="304" r="10" />
+        <circle cx="170" cy="307" r="10" />
+        <circle cx="200" cy="308" r="10" />
+        <circle cx="230" cy="307" r="10" />
+        <circle cx="256" cy="304" r="10" />
+        <circle cx="280" cy="299" r="10" />
+        <circle cx="300" cy="292" r="10" />
+        <circle cx="315" cy="285" r="10" />
+      </g>
+
+      <!-- 3. Birthday Candle (Placed behind strawberries) -->
+      <g id="cake-candle" class="hidden">
+        <!-- Wavy stylish long candle positioned in center -->
+        <path d="M 199,155 
+                 C 197,130 205,105 197,75 
+                 C 194,65 196,55 198,45" 
+              fill="none" stroke="#e0e0e0" stroke-width="4.5" stroke-linecap="round"/>
+        <path d="M 199,155 
+                 C 197,130 205,105 197,75 
+                 C 194,65 196,55 198,45" 
+              fill="none" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+        <!-- Wick -->
+        <line x1="198" y1="45" x2="198" y2="40" stroke="#444" stroke-width="2" />
+        
+        <!-- Flame positioned right above wick (Clickable to Blow Out) -->
+        <g id="candle-flame-group" class="cursor-pointer" onclick="blowOutCandle()">
+          <g id="candle-flame" class="flame-anim">
+            <ellipse cx="198" cy="31" rx="7" ry="12" fill="#ffb703" opacity="0.45"/>
+            <path d="M 198,19 C 204,26 204,35 198,39 C 192,35 192,26 198,19 Z" fill="#ff7b00" />
+            <path d="M 198,24 C 201,28 201,33 198,36 C 195,33 195,28 198,24 Z" fill="#ffea00" />
+          </g>
+          <!-- Smoke puffs (Hidden initially) -->
+          <g id="candle-smoke" class="hidden">
+            <path d="M 198,38 Q 192,28 198,18 Q 204,8 198,0" fill="none" stroke="#cbd5e1" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+            <circle cx="196" cy="12" r="4" fill="#e2e8f0" opacity="0.6"/>
+            <circle cx="201" cy="6" r="6" fill="#e2e8f0" opacity="0.4"/>
+          </g>
+        </g>
+      </g>
+
+      <!-- 4. Strawberries ON Cake (Placed in front of the candle) -->
+      <!-- Strawberry #1: Center Back -->
+      <g id="cake-berry-1" class="hidden transition-all duration-300">
+        <text x="185" y="148" font-size="58" class="select-none drop-shadow-sm transform rotate-3">🍓</text>
+      </g>
+
+      <!-- Strawberry #2: Far Right -->
+      <g id="cake-berry-2" class="hidden transition-all duration-300">
+        <text x="245" y="168" font-size="58" class="select-none drop-shadow-sm transform rotate-15">🍓</text>
+      </g>
+
+      <!-- Strawberry #3: Far Left -->
+      <g id="cake-berry-3" class="hidden transition-all duration-300">
+        <text x="110" y="166" font-size="58" class="select-none drop-shadow-sm transform -rotate-15">🍓</text>
+      </g>
+
+      <!-- Strawberry #4: Front Left -->
+      <g id="cake-berry-4" class="hidden transition-all duration-300">
+        <text x="146" y="184" font-size="58" class="select-none drop-shadow-sm transform -rotate-8">🍓</text>
+      </g>
+
+      <!-- Strawberry #5: Front Right -->
+      <g id="cake-berry-5" class="hidden transition-all duration-300">
+        <text x="214" y="184" font-size="58" class="select-none drop-shadow-sm transform rotate-8">🍓</text>
+      </g>
+    </svg>
+
+    <!-- Age 25 Celebration Banner (Appears after blowing candle) -->
+    <div id="age-banner" class="hidden absolute top-0 left-1/2 -translate-x-1/2 bg-white/95 border-2 border-red-400 rounded-full px-3 py-1 shadow-lg pop-id z-20 whitespace-nowrap max-w-[90%] text-center">
+      <span class="text-[11px] md:text-xs font-bold text-red-600 tracking-wide block truncate">🎉 Happy 25th Birthday! 🎂✨</span>
+    </div>
+
+    <!-- Bottom Strawberry Pile & Candle Source (Click target) -->
+    <div id="source-pile" 
+         onclick="handleStepClick()" 
+         class="absolute bottom-1 left-1/2 -translate-x-1/2 flex flex-col items-center cursor-pointer active:scale-95 transition-transform duration-200 w-full max-w-[320px]">
+      
+      <div class="relative w-full h-16 flex items-center justify-center px-2">
+        <!-- Strawberries neatly lined up side-by-side on the left/center -->
+        <div id="pile-strawberries" class="absolute left-2 top-0 h-full flex items-center space-x-1.5 sm:space-x-2">
+          <span id="tray-berry-1" class="text-3xl sm:text-4xl -rotate-6 transition-all duration-300">🍓</span>
+          <span id="tray-berry-2" class="text-3xl sm:text-4xl rotate-3 transition-all duration-300">🍓</span>
+          <span id="tray-berry-3" class="text-4xl sm:text-5xl -rotate-3 transition-all duration-300">🍓</span>
+          <span id="tray-berry-4" class="text-3xl sm:text-4xl rotate-6 transition-all duration-300">🍓</span>
+          <span id="tray-berry-5" class="text-3xl sm:text-4xl -rotate-12 transition-all duration-300">🍓</span>
+        </div>
+
+        <!-- Unlit Candle safely positioned on the far right without overlapping strawberries -->
+        <svg id="source-candle" class="absolute right-4 top-1 w-6 sm:w-8 h-14 pointer-events-none transition-opacity duration-300" viewBox="0 0 50 100">
+          <path d="M 25,95 C 18,65 32,35 22,5" fill="none" stroke="#d5d5d5" stroke-width="4" stroke-linecap="round"/>
+          <line x1="22" y1="5" x2="22" y2="0" stroke="#555" stroke-width="2"/>
+        </svg>
+      </div>
+      <span class="text-[11px] font-medium text-gray-400 mt-0.5 animate-pulse">Tap here! 👇</span>
+    </div>
+
+    <!-- Shinchan Character (Appears after candle lit) -->
+    <div id="shinchan-container" class="hidden absolute -bottom-4 left-1/2 -translate-x-1/2 flex-col items-center pointer-events-auto">
+      <!-- Speech Bubble -->
+      <div class="relative mb-2">
+        <div id="shinchan-speech" class="bg-white border-2 border-black rounded-2xl px-3 py-1.5 text-xs sm:text-sm font-semibold shadow-[3px_3px_0px_#000] whitespace-nowrap text-gray-800 transition-all duration-300">
+          Woohoo! So amazing!! ✨
+        </div>
+        <div class="absolute -bottom-2 left-1/2 -translate-x-1/2 w-0 h-0 border-l-[8px] border-l-transparent border-r-[8px] border-r-transparent border-t-[8px] border-t-black"></div>
+      </div>
+
+      <!-- Shinchan SVG Character with Clickable Backpack -->
+      <div class="relative w-48 h-56 cursor-pointer" onclick="handleShinchanClick()">
+        <svg viewBox="0 0 200 240" class="w-full h-full drop-shadow-md">
+          <!-- Shinchan Blue Backpack (Highlighted Click Area & Realistic Design) -->
+          <g id="shinchan-backpack" class="transition-all cursor-pointer">
+            <!-- Main Backpack Body -->
+            <rect x="116" y="115" width="40" height="48" rx="14" fill="#0284c7" stroke="#000" stroke-width="3.5" />
+            <!-- Flap / Top Lid -->
+            <path d="M 116,128 Q 136,114 156,128 L 156,122 C 156,115 146,112 136,112 C 126,112 116,115 116,122 Z" fill="#38bdf8" stroke="#000" stroke-width="3" />
+            <!-- Straps -->
+            <path d="M 124,115 Q 110,130 96,145" fill="none" stroke="#0369a1" stroke-width="3" stroke-linecap="round"/>
+            <!-- Center Pocket -->
+            <rect x="123" y="134" width="26" height="22" rx="6" fill="#7dd3fc" stroke="#000" stroke-width="2.5" />
+            <!-- Little Gift Icon in Backpack Pocket -->
+            <text x="128" y="150" font-size="14">🎁</text>
+          </g>
+
+          <!-- Legs & Shoes -->
+          <rect x="65" y="175" width="16" height="28" fill="#ffd5be" stroke="#000" stroke-width="3" rx="4"/>
+          <rect x="105" y="175" width="16" height="28" fill="#ffd5be" stroke="#000" stroke-width="3" rx="4"/>
+          <!-- Yellow Shoes -->
+          <path d="M 52,203 C 52,196 75,196 83,203 C 83,212 52,214 52,203 Z" fill="#facc15" stroke="#000" stroke-width="3"/>
+          <path d="M 103,203 C 103,196 126,196 134,203 C 134,212 103,214 103,203 Z" fill="#facc15" stroke="#000" stroke-width="3"/>
+
+          <!-- Yellow Shorts -->
+          <path d="M 58,150 L 128,150 L 132,180 L 100,180 L 93,165 L 86,180 L 54,180 Z" fill="#facc15" stroke="#000" stroke-width="3.5"/>
+
+          <!-- Red Shirt -->
+          <path d="M 50,110 Q 93,105 136,110 L 132,154 Q 93,158 54,154 Z" fill="#ef4444" stroke="#000" stroke-width="3.5" />
+          <!-- Shirt Sleeves -->
+          <path d="M 50,110 L 36,128 L 52,140 L 58,124 Z" fill="#ef4444" stroke="#000" stroke-width="3" />
+          <path d="M 136,110 L 150,128 L 134,140 L 128,124 Z" fill="#ef4444" stroke="#000" stroke-width="3" />
+
+          <!-- Arms & Hands -->
+          <circle cx="36" cy="135" r="9" fill="#ffd5be" stroke="#000" stroke-width="2.5" />
+          <circle cx="150" cy="135" r="9" fill="#ffd5be" stroke="#000" stroke-width="2.5" />
+
+          <!-- Shinchan Classic Head -->
+          <!-- Classic Cheek Contour -->
+          <path d="M 60,65 
+                   C 35,65 30,105 52,120 
+                   C 65,130 92,126 120,115 
+                   C 142,105 145,75 130,55 
+                   C 115,35 75,35 60,65 Z" 
+                fill="#ffd5be" stroke="#000" stroke-width="3.5" />
+
+          <!-- Classic Thick Eyebrows -->
+          <path d="M 64,52 Q 78,44 95,50" fill="none" stroke="#000" stroke-width="6.5" stroke-linecap="round"/>
+          <path d="M 108,50 Q 124,44 136,54" fill="none" stroke="#000" stroke-width="6.5" stroke-linecap="round"/>
+
+          <!-- Eyes (Switchable: Starry or Big Cute) -->
+          <g id="shinchan-eyes">
+            <!-- Left Eye -->
+            <ellipse cx="80" cy="72" rx="10" ry="14" fill="#000"/>
+            <ellipse cx="82" cy="68" rx="4" ry="6" fill="#fff"/>
+            <circle cx="78" cy="76" r="2" fill="#fff"/>
+            <!-- Right Eye -->
+            <ellipse cx="118" cy="72" rx="10" ry="14" fill="#000"/>
+            <ellipse cx="120" cy="68" rx="4" ry="6" fill="#fff"/>
+            <circle cx="116" cy="76" r="2" fill="#fff"/>
+          </g>
+
+          <!-- Starry Eyes Overlay (Initial Reaction) -->
+          <g id="shinchan-star-eyes">
+            <text x="70" y="78" font-size="20">✨</text>
+            <text x="108" y="78" font-size="20">✨</text>
+          </g>
+
+          <!-- Open Happy Mouth -->
+          <ellipse cx="94" cy="94" rx="12" ry="16" fill="#881337" stroke="#000" stroke-width="2.5" />
+          <path d="M 88,96 Q 94,88 100,96" fill="#fb7185"/>
+
+          <!-- Rosy Cheeks -->
+          <ellipse cx="50" cy="95" rx="9" ry="6" fill="#f87171" opacity="0.45" />
+          <ellipse cx="132" cy="85" rx="9" ry="6" fill="#f87171" opacity="0.45" />
+        </svg>
+
+        <!-- Tap Indicator near backpack -->
+        <div id="backpack-tap-hint" class="hidden absolute top-24 right-0 bg-blue-500 text-white text-[11px] font-bold px-2 py-0.5 rounded-full shadow-lg animate-bounce">
+          Tap backpack! 👈
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Helper Note / Watermark -->
+  <div class="w-full text-center pb-1">
+    <p class="text-[10px] sm:text-xs text-gray-400">Created with love for your special day ❤️</p>
+  </div>
+
+  <!-- Surprise Love Envelope Modal (Step 5) -->
+  <div id="love-letter-modal" class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-3 box-border">
+    <div class="relative w-full max-w-xs sm:max-w-sm max-h-[90vh] overflow-y-auto bg-gradient-to-b from-[#8B1E1E] to-[#601212] rounded-3xl p-4 sm:p-5 shadow-2xl border-4 border-[#b93838] letter-slide-up text-center box-border">
+      
+      <!-- Top Envelope Flap styling -->
+      <div class="absolute -top-12 left-1/2 -translate-x-1/2 w-48 h-24 bg-[#751717] rounded-full border-2 border-red-400/20"></div>
+
+      <!-- Ticket Badge -->
+      <div class="absolute top-4 right-4 bg-amber-50 text-amber-800 text-[10px] font-bold tracking-wider px-2 py-0.5 rounded border border-dashed border-amber-300 shadow-sm rotate-6">
+        🎟️ Special Pass!
+      </div>
+
+      <!-- The Letter Paper Inside -->
+      <div class="bg-[#fcfaf7] rounded-2xl p-5 shadow-inner mt-4 border border-[#ebd8c5]">
+        <h2 class="serif-title text-2xl font-bold tracking-wider text-[#8B1E1E] mb-1">
+          TO YCL
+        </h2>
+        <div class="text-[11px] font-medium text-red-700 tracking-wide mb-3">FROM NEPJUNE 🤍</div>
+
+        <div class="text-gray-700 text-sm leading-relaxed space-y-2 text-center">
+          <p class="font-medium text-red-600">Happy 25th Birthday to you! ❤️🎂</p>
+          <p>
+            Wishing you a year filled with endless smiles and wonderful moments. <br>
+            May all your dreams and wishes come true this year!
+          </p>
+          <p class="text-xs text-gray-600 pt-1">
+            Remember to take good care of yourself, <br>
+            eat lots of delicious food, <br>
+            and stay happy every single day just like you make me happy.
+          </p>
+          <p class="font-medium text-rose-700 pt-2 text-xs">
+            Most importantly... stay by my side forever, <br>
+            because I love you so, so much! 💖
+          </p>
+        </div>
+
+        <!-- Special Coupon / Ticket -->
+        <div class="mt-4 bg-amber-50 border border-amber-300 rounded-lg p-2.5 flex items-center justify-between text-left shadow-sm">
+          <div class="text-xs text-amber-900 font-medium">
+            <div class="font-bold text-amber-950">🎫 1-Day Pass 👑</div>
+            <div class="text-[10px] text-amber-700 mt-0.5">Valid for 24 hours of total pampering and doing whatever you want!</div>
+          </div>
+          <span class="text-xl">🎁</span>
+        </div>
+      </div>
+
+      <!-- Standalone Cute Love Receipt Component -->
+      <style>
+        .love-receipt-wrapper {
+          margin-top: 16px;
+          max-height: 290px;
+          overflow-y: auto;
+          border-radius: 12px;
+          padding-bottom: 12px;
+          scrollbar-width: thin;
+          scrollbar-color: #f472b6 transparent;
+        }
+        .love-receipt-wrapper::-webkit-scrollbar {
+          width: 4px;
+        }
+        .love-receipt-wrapper::-webkit-scrollbar-thumb {
+          background-color: #f472b6;
+          border-radius: 9999px;
+        }
+        .love-receipt-card {
+          background-color: #ffffff;
+          color: #374151;
+          font-family: 'Courier New', Courier, monospace;
+          padding: 18px 14px 16px 14px;
+          position: relative;
+          text-align: center;
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+          border-top: 5px solid #f9a8d4;
+          border-radius: 8px 8px 0 0;
+        }
+        .love-receipt-card::after {
+          content: "";
+          position: absolute;
+          bottom: -10px;
+          left: 0;
+          right: 0;
+          height: 10px;
+          background-image: linear-gradient(135deg, #ffffff 50%, transparent 50%), linear-gradient(225deg, #ffffff 50%, transparent 50%);
+          background-position: 0 0;
+          background-size: 12px 10px;
+          background-repeat: repeat-x;
+        }
+        .love-receipt-divider {
+          border-top: 1.5px dashed #fbcfe8;
+          margin: 10px 0;
+        }
+        .love-receipt-counter-box {
+          background-color: #fdf2f8;
+          border: 1.5px dashed #f472b6;
+          border-radius: 8px;
+          padding: 8px 6px;
+          margin: 10px 0;
+        }
+        .love-receipt-item-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          font-size: 10.5px;
+          line-height: 1.4;
+          margin-bottom: 6px;
+          text-align: left;
+          gap: 8px;
+        }
+        .love-receipt-barcode-link {
+          display: inline-block;
+          margin-top: 8px;
+          padding: 6px 10px;
+          border-radius: 6px;
+          background-color: #fff1f2;
+          border: 1px dashed #fda4af;
+          text-decoration: none;
+          transition: transform 0.15s ease, background-color 0.15s ease;
+        }
+        .love-receipt-barcode-link:hover {
+          background-color: #ffe4e6;
+          transform: scale(1.02);
+        }
+      </style>
+
+      <div class="love-receipt-wrapper">
+        <div class="love-receipt-card">
+          <!-- 1. Header -->
+          <div style="font-size: 15px; font-weight: 800; color: #db2777; letter-spacing: 0.5px;">RECEIPT OF US 💖</div>
+          <div style="font-size: 10px; color: #6b7280; margin-top: 2px;">Branch: The Very First Day We Met</div>
+          <div id="love-receipt-today-date" style="font-size: 10px; color: #9ca3af; margin-top: 2px;">Date: --</div>
+
+          <!-- 2. Live Real-Time Counter Box -->
+          <div class="love-receipt-counter-box">
+            <div style="font-size: 9.5px; font-weight: 700; color: #be185d; margin-bottom: 3px;">✨ TIME SINCE WE FIRST MET ✨</div>
+            <div id="love-receipt-live-timer" style="font-size: 11.5px; font-weight: 800; color: #9d174d; letter-spacing: 0.5px;">Loading...</div>
+          </div>
+
+          <div class="love-receipt-divider"></div>
+
+          <!-- 3. Receipt Items -->
+          <div>
+            <div class="love-receipt-item-row">
+              <span>1x The Day Our Paths Crossed</span>
+              <span style="font-weight: 700; color: #db2777; white-space: nowrap;">Priceless</span>
+            </div>
+            <div class="love-receipt-item-row">
+              <span>∞ Unlimited Hugs &amp; Kisses Quota</span>
+              <span style="font-weight: 700; color: #db2777; white-space: nowrap;">Free</span>
+            </div>
+            <div class="love-receipt-item-row">
+              <span>1x Your Heart-Melting Smile</span>
+              <span style="font-weight: 700; color: #db2777; white-space: nowrap;">$0.00</span>
+            </div>
+            <div class="love-receipt-item-row">
+              <span>100x Free Clingy &amp; Spoiled Passes</span>
+              <span style="font-weight: 700; color: #db2777; white-space: nowrap;">Free</span>
+            </div>
+            <div class="love-receipt-item-row">
+              <span>24/7 Missing &amp; Adoring You Service</span>
+              <span style="font-weight: 700; color: #db2777; white-space: nowrap;">Free</span>
+            </div>
+          </div>
+
+          <div class="love-receipt-divider"></div>
+
+          <!-- 4. Summary & Total Section -->
+          <div style="font-size: 11px; font-weight: 700; display: flex; justify-content: space-between; margin-bottom: 4px; color: #1f2937;">
+            <span>TOTAL MEMORIES:</span>
+            <span style="color: #db2777;">Infinity ♾️</span>
+          </div>
+          <div style="font-size: 11px; font-weight: 700; display: flex; justify-content: space-between; margin-bottom: 6px; color: #1f2937;">
+            <span>BALANCE DUE:</span>
+            <span style="color: #db2777;">$0.00</span>
+          </div>
+          <div style="font-size: 9.5px; font-style: italic; color: #6b7280; text-align: left;">
+            *Payment method: Your smile &amp; a tight hug
+          </div>
+
+          <div class="love-receipt-divider"></div>
+
+          <!-- 5. Footer with Clickable YouTube Barcode -->
+          <div>
+            <a href="https://youtu.be/1QkX7Qetu2Q?si=xuOQLB6P6yLwfda8" target="_blank" rel="noopener noreferrer" class="love-receipt-barcode-link" title="Tap to play our song 🎵">
+              <svg viewBox="0 0 200 42" style="width: 170px; height: 36px; display: block; margin: 0 auto;">
+                <rect x="6" y="2" width="3" height="32" fill="#1f2937"/>
+                <rect x="12" y="2" width="1.5" height="32" fill="#1f2937"/>
+                <rect x="16" y="2" width="4" height="32" fill="#1f2937"/>
+                <rect x="23" y="2" width="2" height="32" fill="#1f2937"/>
+                <rect x="28" y="2" width="1.5" height="32" fill="#1f2937"/>
+                <rect x="33" y="2" width="5" height="32" fill="#1f2937"/>
+                <rect x="41" y="2" width="2" height="32" fill="#1f2937"/>
+                <rect x="46" y="2" width="3" height="32" fill="#1f2937"/>
+                <rect x="53" y="2" width="1.5" height="32" fill="#1f2937"/>
+                <rect x="57" y="2" width="4" height="32" fill="#1f2937"/>
+                <rect x="64" y="2" width="2.5" height="32" fill="#1f2937"/>
+                <rect x="70" y="2" width="1.5" height="32" fill="#1f2937"/>
+                <rect x="75" y="2" width="5" height="32" fill="#1f2937"/>
+                <rect x="83" y="2" width="2" height="32" fill="#1f2937"/>
+                <rect x="88" y="2" width="3.5" height="32" fill="#1f2937"/>
+                <rect x="95" y="2" width="1.5" height="32" fill="#1f2937"/>
+                <rect x="100" y="2" width="4" height="32" fill="#1f2937"/>
+                <rect x="107" y="2" width="2" height="32" fill="#1f2937"/>
+                <rect x="112" y="2" width="3" height="32" fill="#1f2937"/>
+                <rect x="118" y="2" width="5" height="32" fill="#1f2937"/>
+                <rect x="126" y="2" width="1.5" height="32" fill="#1f2937"/>
+                <rect x="131" y="2" width="3" height="32" fill="#1f2937"/>
+                <rect x="137" y="2" width="2" height="32" fill="#1f2937"/>
+                <rect x="142" y="2" width="4.5" height="32" fill="#1f2937"/>
+                <rect x="150" y="2" width="1.5" height="32" fill="#1f2937"/>
+                <rect x="155" y="2" width="3" height="32" fill="#1f2937"/>
+                <rect x="161" y="2" width="2" height="32" fill="#1f2937"/>
+                <rect x="166" y="2" width="5" height="32" fill="#1f2937"/>
+                <rect x="174" y="2" width="1.5" height="32" fill="#1f2937"/>
+                <rect x="179" y="2" width="3.5" height="32" fill="#1f2937"/>
+                <rect x="186" y="2" width="2" height="32" fill="#1f2937"/>
+                <rect x="191" y="2" width="3" height="32" fill="#1f2937"/>
+              </svg>
+              <div style="font-size: 9px; font-weight: 700; color: #e11d48; margin-top: 2px;">🎵 TAP BARCODE FOR OUR SONG 🎵</div>
+            </a>
+            <div style="font-size: 9.5px; font-weight: 700; color: #4b5563; margin-top: 8px; line-height: 1.35;">
+              THANK YOU FOR COMING INTO MY LIFE!<br>So glad I met you on that day 🤍
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        (function initLoveReceipt() {
+          const dateEl = document.getElementById('love-receipt-today-date');
+          const timerEl = document.getElementById('love-receipt-live-timer');
+
+          if (dateEl) {
+            const now = new Date();
+            const options = { year: 'numeric', month: 'short', day: '2-digit' };
+            dateEl.textContent = 'Date: ' + now.toLocaleDateString('en-US', options);
+          }
+
+          const firstMetDate = new Date('2025-08-27T00:00:00').getTime();
+
+          function updateReceiptTimer() {
+            if (!timerEl) return;
+            const now = new Date().getTime();
+            const diff = Math.max(0, now - firstMetDate);
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            timerEl.textContent = days + ' Days ' + hours + 'h ' + minutes + 'm ' + seconds + 's';
+          }
+
+          updateReceiptTimer();
+          setInterval(updateReceiptTimer, 1000);
+        })();
+      </script>
+
+      <!-- Close / Replay Buttons -->
+      <div class="mt-4 flex items-center justify-center gap-3">
+        <button onclick="closeLetter()" class="bg-white/20 hover:bg-white/30 text-white text-xs px-5 py-2 rounded-full font-medium transition-colors border border-white/30">
+          Close ✕
+        </button>
+        <button onclick="restartSurprise()" class="bg-amber-400/90 hover:bg-amber-400 text-amber-950 text-xs px-5 py-2 rounded-full font-bold transition-colors shadow-sm">
+          Replay ↻
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game & Interaction Logic -->
+  <script>
+    let enteredPin = "";
+    const correctPin = "07112026";
+    let wrongPinAttempts = 0;
+
+    function pressKey(num) {
+      if (enteredPin.length < 8) {
+        enteredPin += num;
+        updatePinDisplay();
+        playChime(500 + enteredPin.length * 50, 'sine');
+
+        if (enteredPin.length === 8) {
+          setTimeout(verifyPin, 300);
+        }
+      }
+    }
+
+    function deletePin() {
+      if (enteredPin.length > 0) {
+        enteredPin = enteredPin.slice(0, -1);
+        updatePinDisplay();
+        playChime(350, 'sine');
+      }
+    }
+
+    function clearPin() {
+      enteredPin = "";
+      updatePinDisplay();
+      playChime(300, 'sine');
+    }
+
+    function updatePinDisplay() {
+      const displayEl = document.getElementById("pin-display");
+      let formatted = "";
+      for (let i = 0; i < 8; i++) {
+        let char = enteredPin[i] || "_";
+        formatted += char;
+        if (i === 1 || i === 3) formatted += " / ";
+      }
+      displayEl.textContent = formatted;
+    }
+
+    function verifyPin() {
+      if (enteredPin === correctPin) {
+        playChime(800, 'triangle');
+        confetti({ particleCount: 60, spread: 70, origin: { y: 0.5 } });
+        document.getElementById("pin-modal").classList.add("hidden");
+        document.getElementById("intro-modal").classList.remove("hidden");
+      } else {
+        wrongPinAttempts++;
+        playChime(200, 'sawtooth');
+        
+        let errorMsg = "Incorrect PIN, please try again! ❌";
+        if (wrongPinAttempts >= 2) {
+          errorMsg = "Hint: Try 07/11/2026 💡";
+        }
+        document.getElementById("pin-error").textContent = errorMsg;
+
+        setTimeout(() => {
+          enteredPin = "";
+          updatePinDisplay();
+        }, 900);
+      }
+    }
+
+    function closeIntroModal() {
+      playChime(600, 'triangle');
+      document.getElementById("intro-modal").classList.add("hidden");
+    }
+
+    let step = 0;
+    let candleBlownOut = false;
+    const titleEl = document.getElementById("instruction-title");
+    const sourcePile = document.getElementById("source-pile");
+    const shinchanContainer = document.getElementById("shinchan-container");
+    const shinchanSpeech = document.getElementById("shinchan-speech");
+    const shinchanBackpack = document.getElementById("shinchan-backpack");
+    const backpackHint = document.getElementById("shinchan-tap-hint");
+    const loveLetterModal = document.getElementById("love-letter-modal");
+
+    function handleStepClick() {
+      step++;
+      playChime(400 + step * 80, 'sine');
+
+      if (step === 1) {
+        document.getElementById("cake-berry-1").classList.remove("hidden");
+        document.getElementById("cake-berry-1").classList.add("pop-in");
+        document.getElementById("tray-berry-1").style.opacity = "0";
+        document.getElementById("tray-berry-1").style.transform = "scale(0)";
+        titleEl.textContent = "Tap again!";
+      } else if (step === 2) {
+        document.getElementById("cake-berry-2").classList.remove("hidden");
+        document.getElementById("cake-berry-2").classList.add("pop-in");
+        document.getElementById("tray-berry-2").style.opacity = "0";
+        document.getElementById("tray-berry-2").style.transform = "scale(0)";
+        titleEl.textContent = "Keep going, tap again!";
+      } else if (step === 3) {
+        document.getElementById("cake-berry-3").classList.remove("hidden");
+        document.getElementById("cake-berry-3").classList.add("pop-in");
+        document.getElementById("tray-berry-3").style.opacity = "0";
+        document.getElementById("tray-berry-3").style.transform = "scale(0)";
+        titleEl.textContent = "Almost there!";
+      } else if (step === 4) {
+        document.getElementById("cake-berry-4").classList.remove("hidden");
+        document.getElementById("cake-berry-4").classList.add("pop-in");
+        document.getElementById("tray-berry-4").style.opacity = "0";
+        document.getElementById("tray-berry-4").style.transform = "scale(0)";
+        titleEl.textContent = "Yay, just one more strawberry!";
+      } else if (step === 5) {
+        document.getElementById("cake-berry-5").classList.remove("hidden");
+        document.getElementById("cake-berry-5").classList.add("pop-in");
+        document.getElementById("tray-berry-5").style.opacity = "0";
+        document.getElementById("tray-berry-5").style.transform = "scale(0)";
+        titleEl.textContent = "Now tap to place the candle!";
+      } else if (step === 6) {
+        // Place Candle & Lit
+        document.getElementById("cake-candle").classList.remove("hidden");
+        document.getElementById("cake-candle").classList.add("pop-in");
+        document.getElementById("source-candle").style.opacity = "0";
+        titleEl.textContent = "Enjoy the birthday song! 🎶";
+
+        // Play Full Happy Birthday Song!
+        playHappyBirthdaySong();
+
+        // Confetti burst
+        confetti({
+          particleCount: 50,
+          spread: 60,
+          origin: { y: 0.6 }
+        });
+
+        // Hide bottom pile container completely after a short delay
+        setTimeout(() => {
+          sourcePile.classList.add("hidden");
+        }, 300);
+      }
+    }
+
+    function blowOutCandle() {
+      if (candleBlownOut || step < 6) return;
+      candleBlownOut = true;
+      stopMicrophoneBlowDetection();
+
+      // Hide flame, show smoke
+      document.getElementById("candle-flame").classList.add("hidden");
+      document.getElementById("candle-smoke").classList.remove("hidden");
+      
+      // Show Age 25 Banner
+      document.getElementById("age-banner").classList.remove("hidden");
+
+      titleEl.textContent = "Wish granted! Make a wonderful year ahead ✨💖";
+      titleEl.classList.remove("animate-pulse");
+      
+      // Play chimes and applause!
+      playChime(300, 'sawtooth');
+      playApplauseSound();
+
+      // Big celebratory confetti for blowing candle
+      confetti({
+        particleCount: 100,
+        spread: 100,
+        origin: { y: 0.5 }
+      });
+
+      // Shinchan appears right AFTER the applause sound finishes (approx 2.5 seconds later)
+      setTimeout(() => {
+        playChime(850, 'triangle');
+        shinchanContainer.classList.remove("hidden");
+        shinchanContainer.classList.add("pop-in");
+
+        // Transition speech after 2 seconds
+        setTimeout(() => {
+          document.getElementById("shinchan-star-eyes").classList.add("hidden");
+          shinchanSpeech.textContent = "Nepjune has a gift for you! 🎁 Tap my backpack!";
+          shinchanBackpack.classList.add("backpack-highlight");
+          document.getElementById("backpack-tap-hint").classList.remove("hidden");
+        }, 2000);
+      }, 2600);
+    }
+
+    function handleShinchanClick() {
+      // Open Letter modal
+      playChime(950, 'triangle');
+      loveLetterModal.classList.remove("hidden");
+      
+      // Large Celebration Confetti
+      confetti({
+        particleCount: 120,
+        spread: 80,
+        origin: { y: 0.5 }
+      });
+    }
+
+    function closeLetter() {
+      loveLetterModal.classList.add("hidden");
+    }
+
+    function restartSurprise() {
+      stopMicrophoneBlowDetection();
+      playChime(600, 'sine');
+
+      // Reset variables
+      enteredPin = "";
+      wrongPinAttempts = 0;
+      step = 0;
+      candleBlownOut = false;
+
+      // Reset PIN Screen UI
+      updatePinDisplay();
+      document.getElementById("pin-error").textContent = "";
+      document.getElementById("pin-modal").classList.remove("hidden");
+      document.getElementById("intro-modal").classList.add("hidden");
+      loveLetterModal.classList.add("hidden");
+
+      // Reset Cake & Strawberries UI
+      for (let i = 1; i <= 5; i++) {
+        const cakeBerry = document.getElementById("cake-berry-" + i);
+        cakeBerry.classList.add("hidden");
+        cakeBerry.classList.remove("pop-in");
+
+        const trayBerry = document.getElementById("tray-berry-" + i);
+        trayBerry.style.opacity = "1";
+        trayBerry.style.transform = "";
+      }
+
+      // Reset Candle & Flame UI
+      const cakeCandle = document.getElementById("cake-candle");
+      cakeCandle.classList.add("hidden");
+      cakeCandle.classList.remove("pop-in");
+      document.getElementById("source-candle").style.opacity = "1";
+      document.getElementById("candle-flame").classList.remove("hidden");
+      document.getElementById("candle-smoke").classList.add("hidden");
+      document.getElementById("age-banner").classList.add("hidden");
+
+      // Reset Bottom Tray & Title
+      sourcePile.classList.remove("hidden");
+      titleEl.textContent = "Decorate the cake! 🍓";
+      titleEl.classList.remove("animate-pulse");
+
+      // Reset Shinchan UI
+      shinchanContainer.classList.add("hidden");
+      shinchanContainer.classList.remove("pop-in");
+      document.getElementById("shinchan-star-eyes").classList.remove("hidden");
+      shinchanSpeech.textContent = "Woohoo! So amazing!! ✨";
+      shinchanBackpack.classList.remove("backpack-highlight");
+      document.getElementById("backpack-tap-hint").classList.add("hidden");
+    }
+  </script>
+</body>
+</html>
